@@ -1,7 +1,9 @@
-from flask import Flask
+
+from flask import Flask, jsonify
+from flask_restful import Resource, Api
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "Hello World!" # Just updating my code
+    return "Machine Learning API for Balanced News Summary" # Just updating my code
