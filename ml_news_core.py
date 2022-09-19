@@ -1,6 +1,7 @@
 import warnings
 import re
 from newspaper import Article
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
@@ -72,6 +73,7 @@ def duckduckgo_search(title):
     results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=6)
     for result in results:
         if "https://balancednewssummary.com/" not in result["href"]:
+            print(result["title"])
             source_sites.append(result["title"])
             search_urls.append(result["href"])
     # for i in search(title, tld = "com", num = 10, start = 1, stop = 6):
@@ -99,12 +101,15 @@ def similarity(url_list, article):
     count = 0
 
     for i in url_list:
-        test_article, test_title = extractor(i)
-        test_article = [test_article]
-        sim_transform2 = sim_tfv.transform(test_article[0])
-        score = cosine_similarity(sim_transform1, sim_transform2)
-        cosine.append(score*100)
-        count+=1
+        try: 
+            test_article, test_title = extractor(i)
+            test_article = [test_article]
+            sim_transform2 = sim_tfv.transform(test_article[0])
+            score = cosine_similarity(sim_transform1, sim_transform2)
+            cosine.append(score*100)
+            count+=1
+        except Exception as e:
+            print(e) #naked except for handling failed downloads
     for i in cosine:
         x = str(i).replace('[','').replace(']','')
         cosine_cleaned.append(x)
