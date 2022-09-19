@@ -11,4 +11,6 @@ def index():
 @app.route("/ml-related-news",methods=["GET"])
 def api():
     args = request.args
-    return args
+    if "url" in args:
+        result_dict = similarNews(args["url"])
+        return jsonify(result_dict)

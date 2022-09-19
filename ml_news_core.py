@@ -51,7 +51,7 @@ def text_area_extractor(text):
     text = [text]
     return text
 
-def google_search(title, url):
+def duckduckgo_search(title):
     """
     Function to perform a Google Search with the specified title and URL
     Args:
@@ -62,14 +62,14 @@ def google_search(title, url):
         source_sites: Hostname of the Articles founder over the Web
     """
     print("Searching duckduckgo")
-    target = url
-    domain = urlparse(target).hostname
+    # target = url
+    # domain = urlparse(target).hostname
     print(title)
     title = title.split(" – Balanced News Summary")[0]
     print(title)
     search_urls = []
     source_sites = []
-    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=25)
+    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=6)
     for result in results:
         if "https://balancednewssummary.com/" not in result["href"]:
             source_sites.append(result["title"])
@@ -153,7 +153,7 @@ def similarNews(url):
         dictionary: Dictionary containing all the similar news articles and their similarity score
     """
     prediction, article_title, article, url = handlelink(article_link=url)
-    url_list, sitename = google_search(article_title, url)
+    url_list, sitename = duckduckgo_search(article_title)
     similarity_score, avgScore = similarity(url_list, article)
     dictionary = dict(zip(url_list, similarity_score))
     return dictionary
