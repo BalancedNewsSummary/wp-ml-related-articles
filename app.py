@@ -12,5 +12,10 @@ def index():
 def api():
     args = request.args
     if "url" in args:
-        result_dict = similarNews(args["url"])
-        return jsonify(result_dict)
+        try:
+            print(args["url"])
+            print("working")
+            result_dict = similarNews(args["url"])
+            return jsonify(result_dict)
+        except Exception as e:
+            return jsonify({"Error":str(e)})
