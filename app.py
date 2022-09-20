@@ -1,7 +1,7 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from ml_news_core import similarNews
-
+import json
 app = Flask(__name__)
 
 @app.route("/")
@@ -11,11 +11,19 @@ def index():
 @app.route("/ml-related-news",methods=["GET"])
 def api():
     args = request.args
+    attempts = 0
     if "url" in args:
-        try:
-            print(args["url"])
-            print("working")
-            result_dict = similarNews(args["url"])
-            return jsonify(result_dict)
-        except Exception as e:
-            return jsonify({"Error":str(e)})
+        while attempts < 5:
+            try:
+                print(args["url"])
+                print("working")
+                result_dict = similarNews(args["url"])
+            
+                result = jsonify(result_dict)
+                # return Response(json.dumps(result_dict,indent=2), mimetype="application/json")
+                # return result_dict
+                break
+            except Exception as e:
+                result = jsonify({"Error":str(e)})
+                attempts+=1
+        return result

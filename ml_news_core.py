@@ -70,7 +70,7 @@ def duckduckgo_search(title):
     print(title)
     search_urls = []
     source_sites = []
-    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=6)
+    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=10)
     for result in results:
         if "https://balancednewssummary.com/" not in result["href"]:
             print(result["title"])
@@ -161,7 +161,9 @@ def similarNews(url):
     url_list, sitename = duckduckgo_search(article_title)
     similarity_score, avgScore = similarity(url_list, article)
     dictionary = dict(zip(url_list, similarity_score))
-    return dictionary
+    json_response = [{key:dictionary[key]} for key in dictionary]
+    # dictionary = [{item,similarity_score[index]} for index,item in enumerate(url_list)]
+    return json_response
 
 
 
