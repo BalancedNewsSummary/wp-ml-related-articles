@@ -9,8 +9,15 @@ from duckduckgo_search import ddg
 import joblib
 from googlesearch import search
 from urllib.parse import urlparse
+import operator
+from itertools import islice
 
 warnings.filterwarnings("ignore")
+
+
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
 
 def extractor(url):
     """
@@ -99,7 +106,7 @@ def similarity(url_list, article):
     cosine_cleaned = []
     cosine_average = 0
     count = 0
-
+    article_titles = []
     for i in url_list:
         try: 
             test_article, test_title = extractor(i)
@@ -107,12 +114,13 @@ def similarity(url_list, article):
             sim_transform2 = sim_tfv.transform(test_article[0])
             score = cosine_similarity(sim_transform1, sim_transform2)
             cosine.append(score*100)
+            article_titles.append(test_title)
             count+=1
         except Exception as e:
             print(e) #naked except for handling failed downloads
     for i in cosine:
         x = str(i).replace('[','').replace(']','')
-        cosine_cleaned.append(x)
+        cosine_cleaned.append(float(x))
 
     for i in cosine:
         if i !=0:
@@ -123,7 +131,8 @@ def similarity(url_list, article):
     average_score = cosine_average/count
     average_score = str(average_score).replace('[','').replace(']','')
     average_score = float(average_score)
-    return cosine_cleaned, average_score
+    # return cosine_cleaned, average_score
+    return cosine_cleaned,article_titles
 
 def handlelink(article_link):
     """
@@ -158,12 +167,22 @@ def similarNews(url):
         dictionary: Dictionary containing all the similar news articles and their similarity score
     """
     prediction, article_title, article, url = handlelink(article_link=url)
-    url_list, sitename = duckduckgo_search(article_title)
-    similarity_score, avgScore = similarity(url_list, article)
+    url_list, article_titles = duckduckgo_search(article_title)
+    # similarity_score, avgScore = similarity(url_list, article)
+    similarity_score, article_titles_old = similarity(url_list, article)
     dictionary = dict(zip(url_list, similarity_score))
-    json_response = [{key:dictionary[key]} for key in dictionary]
+    url_title_dict = dict(zip(url_list, article_titles))
+    sorted_d = dict( sorted(dictionary.items(), key=lambda item:item[1],reverse=True))
+    # for key in dictionary:
+    #     if dictionary[key] >
+    json_response = [{key:url_title_dict[key]} for key in sorted_d]
+    # # url_list = [{key:n_items[key]} for key in n_items]
+    # url_list = [{key:article_titles[index]} for index,key in enumerate(sorted_d)]
     # dictionary = [{item,similarity_score[index]} for index,item in enumerate(url_list)]
-    return json_response
+    print(dictionary)
+    print(url_title_dict)
+    print(json_response)
+    return json_response[0:3]
 
 
 
