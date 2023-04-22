@@ -69,7 +69,7 @@ def google_search(title, url):
     print(title)
     search_urls = []
     source_sites = []
-    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=25)
+    results = ddg(title, region='wt-wt', safesearch='Moderate', time='w', max_results=25)
     for result in results:
         if "https://balancednewssummary.com/" not in result["href"]:
             source_sites.append(result["title"])
