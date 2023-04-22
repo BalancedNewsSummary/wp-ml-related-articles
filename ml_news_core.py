@@ -77,7 +77,7 @@ def duckduckgo_search(title):
     print(title)
     search_urls = []
     source_sites = []
-    results = ddg(title, region='wt-wt', safesearch='Moderate', time='y', max_results=10)
+    results = ddg(title, region='wt-wt', safesearch='Moderate', time='w', max_results=10)
     for result in results:
         if "https://balancednewssummary.com/" not in result["href"]:
             print(result["title"])
